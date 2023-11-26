@@ -1,0 +1,45 @@
+# Contenedor psql + pgAdmin
+
+# Version de docker-compose a usar...
+version: "3.8"
+
+# Estructura completa...
+services:
+
+    # Postgres
+    pgsql:
+        image: postgres:16-alpine
+        restart: always
+
+        ports:
+            #  host:docker
+            - "5432:5432"
+
+        # Parametros de entorno...
+        environment:
+            DATABASE_HOST: 127.0.0.1
+            POSTGRES_USER: root
+            POSTGRES_PASSWORD: lol
+            #POSTGRES_DB=root
+
+        # Volumen o directorio donde persistirán los datos de la BD.
+        volumes:
+            #- pgsql:/var/lib/postgresql/data 
+            - ./pgsql:/var/lib/postgresql/data
+
+    pgadmin:
+        image: dpage/pgadmin4
+        environment:
+            PGADMIN_DEFAULT_EMAIL: admin@admin.com
+            PGADMIN_DEFAULT_PASSWORD: 12345678
+
+        ports:
+            - "81:80"
+
+        # Especifica que la imagen pgadmin dependerá de la imagen postgres, por ende se iniciará despues de ella.
+        depends_on:
+            - pgsql
+
+# Especifica que persistiremos los datos trabajados en el contenedor.
+volumes:
+    persistent:       
